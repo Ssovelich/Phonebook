@@ -2,15 +2,11 @@ import * as Yup from "yup";
 import { useId } from "react";
 import MaskedInput from "react-text-mask";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import styles from "./ContactForm.module.css";
+import styles from "./ContactEditForm.module.css";
+import { IoMdClose } from "react-icons/io";
 import { useDispatch } from "react-redux";
-import { addContact } from "../../redux/contactsOps";
-
-const initialValues = {
-  name: "",
-  number: "",
-  email: "",
-};
+import { editContact } from "../../redux/contactsOps";
+import { setCurentContact } from "../../redux/contactsSlice";
 
 const ContsctSchema = Yup.object().shape({
   name: Yup.string()
@@ -28,7 +24,7 @@ const ContsctSchema = Yup.object().shape({
     .required("Email is required"),
 });
 
-const ContactForm = () => {
+const ContactEditForm = ({ id, name, number, email }) => {
   const dispatch = useDispatch();
 
   const nameFieldId = useId();
@@ -36,19 +32,26 @@ const ContactForm = () => {
   const emailFieldId = useId();
 
   const handleSubmit = (values, actions) => {
-    dispatch(addContact({ ...values }));
+    dispatch(editContact({ ...values, id }));
 
     actions.resetForm();
   };
 
+  const closeEdit = () => {
+    dispatch(setCurentContact(null));
+  };
+
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={{ name, number, email }}
       onSubmit={handleSubmit}
       validationSchema={ContsctSchema}
     >
       {({ values, setFieldValue }) => (
         <Form className={styles.form}>
+          <button onClick={closeEdit} className={styles.btnClose} type="button">
+            <IoMdClose />
+          </button>
           <div className={styles.formItem}>
             <label className={styles.formItemLabel} htmlFor={nameFieldId}>
               Name
@@ -116,7 +119,7 @@ const ContactForm = () => {
             />
           </div>
           <button className={styles.btn} type="submit">
-            <span>Add contact</span>
+            <span>Save contact</span>
           </button>
         </Form>
       )}
@@ -124,4 +127,4 @@ const ContactForm = () => {
   );
 };
 
-export default ContactForm;
+export default ContactEditForm;

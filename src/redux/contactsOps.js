@@ -40,3 +40,19 @@ export const deleteContact = createAsyncThunk(
     }
   }
 );
+
+export const editContact = createAsyncThunk(
+  "contacts/editContact",
+  async ({ id, name, number, email }, thunkApi) => {
+    try {
+      const response = await moviesInstance.put(`/contacts/${id}`, {
+        name,
+        number,
+        email,
+      });
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
